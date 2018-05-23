@@ -4,15 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 @Setter
 class NodeArray {
 
-    private boolean lastWordOfThisLeaf;
+    private static final int MAX_CHARS = 26;
+    private boolean finalCharOfWord;
     private char nodeValue;
     private NodeArray[] children;
-    private static final int MAX_CHARS = 26;
     private String nodeFullValue;
 
     NodeArray() {
@@ -35,7 +38,8 @@ class NodeArray {
         return nodeArray;
     }
 
-    void insertNewElementInTrie(char currentChar, final String nodeFullValue, final NodeArray nodeArray) {
+    void insertNewElementInTrie(char currentChar, final String nodeFullValue) {
+        final NodeArray nodeArray = new NodeArray();
         nodeArray.nodeValue = currentChar;
         nodeArray.nodeFullValue = nodeFullValue;
 
@@ -45,5 +49,26 @@ class NodeArray {
                 break;
             }
         }
+    }
+
+    private NodeArray[] getAllChildren() {
+        return this.children;
+    }
+
+    List<String> getAllChildrenWords() {
+        final List<String> allMatchingWords = new LinkedList<>();
+
+        if (this.isFinalCharOfWord()) {
+            allMatchingWords.add(this.getNodeFullValue());
+        }
+
+        Arrays.stream(this.getAllChildren())
+                .forEach(currentChild -> {
+                    if (currentChild != null) {
+                        final Collection<String> childPrefixes = currentChild.getAllChildrenWords();
+                        allMatchingWords.addAll(childPrefixes);
+                    }
+                });
+        return allMatchingWords;
     }
 }
