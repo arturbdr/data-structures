@@ -50,4 +50,24 @@ public interface TrieContract {
      */
     List<String> suggestionsOf(final String wordToSuggest);
 
+    /**
+     * Remove one entry from the Trie <br/>
+     * For example:
+     * <br/>
+     * If the tree contains the following words:
+     * <ul>
+     * <li>engineer</li>
+     * <li>engineering</li>
+     * <li>engine</li>
+     * <li>engaged</li>
+     * <li>emergency</li>
+     * </ul>
+     * <p>
+     * And this method gets called passing as parameter the word ("engineer") it will remove this element from the Trie:
+     *
+     * @param wordToRemove - The word to be removed
+     * @throws - IllegalArgumentException if the word to suggest is null or empty
+     */
+    void removeEntry(final String wordToRemove);
+
 }

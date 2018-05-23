@@ -16,10 +16,8 @@ trie.impl.array.NodeArray
 
 Both are implementing a single interface with the following methods
 ```java
-boolean find(final String wordToSearch);
+boolean contains(final String wordToSearch);
+List<String> suggestionsOf(final String wordToSuggest);
 void addEntry(final String wordToInclude);
+void removeEntry(final String wordToRemove);
 ```
-
-TODOs - due date 23/May
-- [ ] Implement autocomplete (given a word, sugest all possible 'solutions').
-- [ ] Delete a node from the trie

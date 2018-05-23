@@ -43,13 +43,21 @@ class NodeMap {
 
         this.getAllChildren()
                 .forEach(currentChild -> {
-                    final Collection<String> childPrefixes = currentChild.getValue().getAllChildrenWords();
-                    allMatchingWords.addAll(childPrefixes);
+                    final Collection<String> childMatchingWords = currentChild.getValue().getAllChildrenWords();
+                    allMatchingWords.addAll(childMatchingWords);
                 });
         return allMatchingWords;
     }
 
     private Set<Map.Entry<Character, NodeMap>> getAllChildren() {
         return this.getTrieMap().entrySet();
+    }
+
+    boolean hasChildren() {
+        return !this.trieMap.isEmpty();
+    }
+
+    void excludeChild(final NodeMap nodeFromStack) {
+        this.getTrieMap().remove(nodeFromStack.nodeValue);
     }
 }

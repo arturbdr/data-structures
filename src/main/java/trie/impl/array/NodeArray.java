@@ -3,10 +3,7 @@ package trie.impl.array;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -65,10 +62,24 @@ class NodeArray {
         Arrays.stream(this.getAllChildren())
                 .forEach(currentChild -> {
                     if (currentChild != null) {
-                        final Collection<String> childPrefixes = currentChild.getAllChildrenWords();
-                        allMatchingWords.addAll(childPrefixes);
+                        final Collection<String> childMatchingWords = currentChild.getAllChildrenWords();
+                        allMatchingWords.addAll(childMatchingWords);
                     }
                 });
         return allMatchingWords;
+    }
+
+    boolean hasChildren() {
+        return Arrays
+                .stream(this.children)
+                .anyMatch(Objects::nonNull);
+    }
+
+    void excludeChild(final NodeArray nodeToRemove) {
+        for (int i = 0; i < this.children.length; i++) {
+            if (this.children[i].nodeValue == nodeToRemove.nodeValue) {
+                this.children[i] = null;
+            }
+        }
     }
 }

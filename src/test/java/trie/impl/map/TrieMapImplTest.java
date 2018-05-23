@@ -158,4 +158,81 @@ public class TrieMapImplTest {
         thrown.expect(IllegalArgumentException.class);
         trieContract.suggestionsOf("");
     }
+
+    @Test
+    public void shouldRemoveOneElementFromTrie() {
+        trieContract.addEntry("EnginEer");
+        trieContract.addEntry("engineering");
+        trieContract.addEntry("Engine");
+        trieContract.addEntry("GrEat");
+        trieContract.addEntry("CaRrEat");
+        assertThat(trieContract.contains("engineer"), is(true));
+
+        List<String> matchingWordsBeforeRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsBeforeRemoval, containsInAnyOrder("engineer", "engineering", "engine"));
+        assertThat(matchingWordsBeforeRemoval, hasSize(3));
+
+        trieContract.removeEntry("engineer");
+
+        assertThat(trieContract.contains("engineer"), is(false));
+        List<String> matchingWordsAfterRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsAfterRemoval, containsInAnyOrder("engineering", "engine"));
+        assertThat(matchingWordsAfterRemoval, hasSize(2));
+    }
+
+    @Test
+    public void shouldRemoveTwoElementsFromTrie() {
+        trieContract.addEntry("EnginEer");
+        trieContract.addEntry("engineering");
+        trieContract.addEntry("Engine");
+        trieContract.addEntry("CaRrEat");
+        assertThat(trieContract.contains("engineer"), is(true));
+
+        List<String> matchingWordsBeforeRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsBeforeRemoval, containsInAnyOrder("engineer", "engineering", "engine"));
+        assertThat(matchingWordsBeforeRemoval, hasSize(3));
+
+        trieContract.removeEntry("engineer");
+        trieContract.removeEntry("engine");
+
+        assertThat(trieContract.contains("engineer"), is(false));
+        assertThat(trieContract.contains("engine"), is(false));
+        List<String> matchingWordsAfterRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsAfterRemoval, containsInAnyOrder("engineering"));
+        assertThat(matchingWordsAfterRemoval, hasSize(1));
+    }
+
+    @Test
+    public void shouldRemoveNoEntriesFromTrie() {
+        trieContract.addEntry("EnginEer");
+        trieContract.addEntry("engineering");
+        trieContract.addEntry("Engine");
+        trieContract.addEntry("CaRrEat");
+        assertThat(trieContract.contains("engineer"), is(true));
+
+        List<String> matchingWordsBeforeRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsBeforeRemoval, containsInAnyOrder("engineer", "engineering", "engine"));
+        assertThat(matchingWordsBeforeRemoval, hasSize(3));
+
+        trieContract.removeEntry("e");
+        trieContract.removeEntry("eng");
+
+        List<String> matchingWordsAfterRemoval = trieContract.suggestionsOf("en");
+        assertThat(matchingWordsAfterRemoval, containsInAnyOrder("engineer", "engineering", "engine"));
+        assertThat(matchingWordsAfterRemoval, hasSize(3));
+    }
+
+    @Test
+    public void shouldThrowIllegalArgumentExceptionWhenRemovingWithNull() {
+        thrown.expect(IllegalArgumentException.class);
+        trieContract.removeEntry(null);
+    }
+
+    @Test
+    public void shouldThrowIllegalArgumentExceptionWhenRemovingWithEmpty() {
+        thrown.expect(IllegalArgumentException.class);
+        trieContract.removeEntry("");
+    }
+
+
 }
