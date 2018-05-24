@@ -63,11 +63,30 @@ public interface TrieContract {
      * <li>emergency</li>
      * </ul>
      * <p>
-     * And this method gets called passing as parameter the word ("engineer") it will remove this element from the Trie:
+     * And this method gets called passing as parameter the word ("engineer") it will remove this element from the Trie.
      *
      * @param wordToRemove - The word to be removed
      * @throws - IllegalArgumentException if the word to suggest is null or empty
      */
     void removeEntry(final String wordToRemove);
+
+    /**
+     * Check, for a given word, if it has a prefix <br/>
+     * For example:
+     * <br/>
+     * If the tree contains the following words:
+     * <ul>
+     * <li>eng</li>
+     * </ul>
+     * <p>
+     * And this method gets called passing as parameter the word ("engineering") it will return true.
+     * If this method gets called passing as parameter the word ("engineer") it will return true.
+     * If this method gets called passing as parameter the word ("energy") it will return true.
+     * If this method gets called passing as parameter the word ("emergency") it will return false.
+     *
+     * @param wordPrefix - The word to check if it has prefix
+     * @throws - IllegalArgumentException if the word to suggest is null or empty
+     */
+    boolean containsPrefix(final String wordPrefix);
 
 }
