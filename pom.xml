@@ -14,8 +14,8 @@
     <properties>
         <hamcrest-integration.version>1.3</hamcrest-integration.version>
         <java.version>1.8</java.version>
-        <junit.version>4.12</junit.version>
-        <lombok.version>1.16.20</lombok.version>
+        <junit.version>4.13.1</junit.version>
+        <lombok.version>1.18.16</lombok.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
