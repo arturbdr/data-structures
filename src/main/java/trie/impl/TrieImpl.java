@@ -1,4 +1,4 @@
-package trie.impl.array;
+package trie.impl;
 
 
 import trie.TrieContract;
@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
-public class TrieArrayImpl implements TrieContract {
+public class TrieImpl implements TrieContract {
 
-    private final NodeArray root;
+    private final Node root;
 
-    TrieArrayImpl() {
-        this.root = new NodeArray();
+    public TrieImpl(Node nodeImpl) {
+        this.root = nodeImpl;
     }
 
     private void validateInput(final String word) {
@@ -26,37 +26,37 @@ public class TrieArrayImpl implements TrieContract {
     public boolean contains(final String wordToCheck) {
         validateInput(wordToCheck);
 
-        NodeArray currentNodeArray = root;
+        Node currentNode = root;
         for (char currentChar : wordToCheck.toLowerCase().toCharArray()) {
-            if (!currentNodeArray.containsChar(currentChar)) {
+            if (!currentNode.containsChar(currentChar)) {
                 return false;
             }
-            currentNodeArray = currentNodeArray.getNextNodeFromTrie(currentChar);
+            currentNode = currentNode.getNextNodeFromTrie(currentChar);
         }
-        return currentNodeArray.isFinalCharOfWord();
+        return currentNode.isFinalCharOfWord();
     }
 
     @Override
     public void addEntry(final String wordToInclude) {
         validateInput(wordToInclude);
 
-        NodeArray currentRoot = root;
-        final StringBuilder nodeValue = new StringBuilder();
+        Node currentNode = root;
+        final StringBuilder nodeFullValue = new StringBuilder();
         for (char currentChar : wordToInclude.toLowerCase().toCharArray()) {
-            nodeValue.append(currentChar);
-            if (!currentRoot.containsChar(currentChar)) {
-                currentRoot.insertNewElementInTrie(currentChar, nodeValue.toString());
+            nodeFullValue.append(currentChar);
+            if (!currentNode.containsChar(currentChar)) {
+                currentNode.insertNewElementInTrie(currentChar, nodeFullValue.toString());
             }
-            currentRoot = currentRoot.getNextNodeFromTrie(currentChar);
+            currentNode = currentNode.getNextNodeFromTrie(currentChar);
         }
-        currentRoot.setFinalCharOfWord(true);
+        currentNode.setFinalCharOfWord(true);
     }
 
     @Override
-    public List<String> suggestionsOf(String wordToSuggest) {
+    public List<String> suggestionsOf(final String wordToSuggest) {
         validateInput(wordToSuggest);
 
-        NodeArray currentNodeMap = root;
+        Node currentNodeMap = root;
         for (char currentChar : wordToSuggest.toLowerCase().toCharArray()) {
             if (!currentNodeMap.containsChar(currentChar)) {
                 return Collections.emptyList();
@@ -70,17 +70,39 @@ public class TrieArrayImpl implements TrieContract {
     public void removeEntry(final String wordToRemove) {
         validateInput(wordToRemove);
 
-        Deque<NodeArray> nodesToBeDeleted = unmarkWordFromTrie(wordToRemove);
+        Deque<Node> nodesToBeDeleted = unmarkWordFromTrie(wordToRemove);
         if (nodesToBeDeleted == null) return;
 
         removeWordFromTrie(nodesToBeDeleted);
     }
 
-    private void removeWordFromTrie(Deque<NodeArray> nodesToBeDeleted) {
+    @Override
+    public boolean containsPrefix(final String wordPrefix) {
+        validateInput(wordPrefix);
+
+        Node currentNode = root;
+
+        for (char currentChar : wordPrefix.toLowerCase().toCharArray()) {
+
+            if (currentNode.isFinalCharOfWord()) {
+                return true;
+            }
+
+            if (!currentNode.containsChar(currentChar)) {
+                return false;
+            }
+
+            currentNode = currentNode.getNextNodeFromTrie(currentChar);
+        }
+
+        return currentNode.getNodeFullValue().equals(wordPrefix) && currentNode.isFinalCharOfWord();
+    }
+
+    private void removeWordFromTrie(final Deque<Node> nodesToBeDeleted) {
         for (int i = 0; i < nodesToBeDeleted.size(); i++) {
-            final NodeArray nodeFromStack = nodesToBeDeleted.pop();
+            final Node nodeFromStack = nodesToBeDeleted.pop();
             if (!nodeFromStack.hasChildren() && !nodeFromStack.isFinalCharOfWord()) {
-                NodeArray immediateFather = nodesToBeDeleted.peek();
+                Node immediateFather = nodesToBeDeleted.peek();
                 immediateFather.excludeChild(nodeFromStack);
             } else {
                 break;
@@ -88,9 +110,9 @@ public class TrieArrayImpl implements TrieContract {
         }
     }
 
-    private Deque<NodeArray> unmarkWordFromTrie(final String wordToRemove) {
-        NodeArray currentNodeMap = root;
-        Deque<NodeArray> nodesToBeDeleted = new ArrayDeque<>();
+    private Deque<Node> unmarkWordFromTrie(final String wordToRemove) {
+        Node currentNodeMap = root;
+        Deque<Node> nodesToBeDeleted = new ArrayDeque<>();
         for (char currentChar : wordToRemove.toLowerCase().toCharArray()) {
             if (!currentNodeMap.containsChar(currentChar)) {
                 return null;
@@ -102,5 +124,4 @@ public class TrieArrayImpl implements TrieContract {
         currentNodeMap.setFinalCharOfWord(false);
         return nodesToBeDeleted;
     }
-
 }

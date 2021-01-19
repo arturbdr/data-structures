@@ -2,32 +2,34 @@ package trie.impl.array;
 
 import lombok.Getter;
 import lombok.Setter;
+import trie.impl.Node;
 
 import java.util.*;
 
 @Getter
 @Setter
-class NodeArray {
+public class NodeArray implements Node {
 
-    private static final int MAX_CHARS = 26;
     private boolean finalCharOfWord;
     private char nodeValue;
     private NodeArray[] children;
     private String nodeFullValue;
 
-    NodeArray() {
-        this.children = new NodeArray[MAX_CHARS];
+    public NodeArray() {
+        this.setChildren(new NodeArray[MAX_CHARS]);
     }
 
-    boolean containsChar(char charToCheck) {
+    @Override
+    public boolean containsChar(char charToCheck) {
         return Arrays.stream(children)
-                .anyMatch(child -> child != null && child.nodeValue == charToCheck);
+                .anyMatch(child -> child != null && child.getNodeValue() == charToCheck);
     }
 
-    NodeArray getNextNodeFromTrie(char charToCheck) {
+    @Override
+    public NodeArray getNextNodeFromTrie(char charToCheck) {
         NodeArray nodeArray = null;
         for (NodeArray currentNodeArray : children) {
-            if (currentNodeArray != null && currentNodeArray.nodeValue == charToCheck) {
+            if (currentNodeArray != null && currentNodeArray.getNodeValue() == charToCheck) {
                 nodeArray = currentNodeArray;
                 break;
             }
@@ -35,10 +37,11 @@ class NodeArray {
         return nodeArray;
     }
 
-    void insertNewElementInTrie(char currentChar, final String nodeFullValue) {
+    @Override
+    public void insertNewElementInTrie(char currentChar, final String nodeFullValue) {
         final NodeArray nodeArray = new NodeArray();
-        nodeArray.nodeValue = currentChar;
-        nodeArray.nodeFullValue = nodeFullValue;
+        nodeArray.setNodeValue(currentChar);
+        nodeArray.setNodeFullValue(nodeFullValue);
 
         for (int i = 0; i < this.children.length; i++) {
             if (children[i] == null) {
@@ -48,18 +51,15 @@ class NodeArray {
         }
     }
 
-    private NodeArray[] getAllChildren() {
-        return this.children;
-    }
-
-    List<String> getAllChildrenWords() {
+    @Override
+    public List<String> getAllChildrenWords() {
         final List<String> allMatchingWords = new LinkedList<>();
 
         if (this.isFinalCharOfWord()) {
             allMatchingWords.add(this.getNodeFullValue());
         }
 
-        Arrays.stream(this.getAllChildren())
+        Arrays.stream(this.getChildren())
                 .forEach(currentChild -> {
                     if (currentChild != null) {
                         final Collection<String> childMatchingWords = currentChild.getAllChildrenWords();
@@ -69,16 +69,19 @@ class NodeArray {
         return allMatchingWords;
     }
 
-    boolean hasChildren() {
+    @Override
+    public boolean hasChildren() {
         return Arrays
-                .stream(this.children)
+                .stream(this.getChildren())
                 .anyMatch(Objects::nonNull);
     }
 
-    void excludeChild(final NodeArray nodeToRemove) {
+    @Override
+    public void excludeChild(final Node nodeToRemove) {
         for (int i = 0; i < this.children.length; i++) {
-            if (this.children[i].nodeValue == nodeToRemove.nodeValue) {
+            if (this.children[i] != null && this.children[i].getNodeValue() == nodeToRemove.getNodeValue()) {
                 this.children[i] = null;
+                break;
             }
         }
     }
